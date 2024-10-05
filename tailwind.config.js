@@ -143,6 +143,7 @@ export default {
       header: ["80px", "60px"],
       headerDescription: ["14px", "20px"],
       sectionLower: ["15px", "20px"],
+      sm: ["12px", "12px"],
       sectionData: ["12px", "20px"],
       headerSection: ["20px", "20px"],
     },
