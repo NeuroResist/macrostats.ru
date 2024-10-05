@@ -1,31 +1,27 @@
-import { Link, useLocation, useParams } from "react-router-dom";
-import { info } from "../constants.ts";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 
 export const Chart = () => {
-  const { id } = useParams();
   const location = useLocation(); // Получение переданного объекта из state
 
   const {
     full_name,
-    full_units,
     second_full_units,
     seasonality,
     period,
-    yaxis,
-    first_date_observe,
     last_observation,
-    last_date_observe,
     updated,
+    // eslint-disable-next-line no-unsafe-optional-chaining
   } = location.state?.item; // Доступ к переданным данным
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(undefined);
+  const [endDate, setEndDate] = useState(undefined);
 
-  const formatDate = (date) => (date ? format(date, "dd.MM.yyyy") : "");
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const formatDate = (date: any) => (date ? format(date, "dd.MM.yyyy") : "");
 
   console.log(startDate, endDate);
 
@@ -67,9 +63,13 @@ export const Chart = () => {
               className="bg-Light-gray h-36 max-w-100"
               selected={startDate}
               onChange={(date) => {
-                setStartDate(date);
-                if (endDate && date > endDate) {
-                  setEndDate(null); // Сбросить "To" дату, если "From" больше "To"
+                /* eslint-disable @typescript-eslint/no-explicit-any */
+                setStartDate(date as any);
+                const validDate = date || new Date(); // Установить текущую дату, если `date` — null
+                const validEndDate = endDate || new Date(); // Установить текущую дату, если `date` — null
+
+                if (endDate && validDate! > validEndDate) {
+                  setEndDate(undefined); // Сбросить "To" дату, если "From" больше "To"
                 }
               }}
               selectsStart
@@ -85,7 +85,8 @@ export const Chart = () => {
             <DatePicker
               className="bg-Light-gray h-36 flex max-w-100"
               selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              /* eslint-disable @typescript-eslint/no-explicit-any */
+              onChange={(date) => setEndDate(date as any)}
               selectsEnd
               startDate={startDate}
               endDate={endDate}
