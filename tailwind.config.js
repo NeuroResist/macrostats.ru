@@ -4,15 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        "Dark-blue": "#060a44",
-        "Logo-blue": "#e5edff",
-        "Dark-gray": "#b4b5be",
-        "Light-gray": "#e6e9ef",
-        "Bright-blue": "#0b21bf",
-        "Black-text": "#15161a",
-        Background: "#f4f4f4",
+        "Dark-blue": "#060a44", // темный синий (хедер)
+        "Logo-blue": "#e5edff", // лого синий (для всех букв логотипа)
+        "Dark-gray": "#b4b5be", // темный серый (верхняя часть блока, где полное название)
+        "Light-gray": "#e6e9ef", // светлый серый (нижняя часть блока с метадатой)
+        "Bright-blue": "#0b21bf", // яркий синий для заголовков (полных названий)
+        "Black-text": "#15161a", // черный для текста
+        "Gray-text": "#2b2e3b", // серый для текста
+        Background: "#f4f4f4", // фон всего сайта
       },
       scrollbar: ["rounded"],
+    },
+    fontFamily: {
+      lucon: ["Lucon", "sans-serif"],
     },
     boxShadow: {
       "close-button": "0 2px 16px 0 rgba(0, 0, 0, 0.078)",
@@ -136,11 +140,11 @@ export default {
     minHeight: (theme) => theme("maxHeight"),
     minWidth: (theme) => theme("width"),
     fontSize: {
-      xs: ["12px", "16px"],
-      sm: ["14px", "20px"],
-      base: ["16px", "22px"],
-      lg: ["18px", "24px"],
-      xl: ["24px", "32px"],
+      header: ["80px", "60px"],
+      headerDescription: ["14px", "20px"],
+      sectionLower: ["15px", "20px"],
+      sectionData: ["12px", "20px"],
+      headerSection: ["20px", "20px"],
     },
     keyframes: {
       "slide-up": {
