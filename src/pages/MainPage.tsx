@@ -1,14 +1,19 @@
 import { info } from "../constants.ts";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const MainPage = () => {
+  const location = useLocation();
+
   return (
     <>
       <main className="space-y-20">
         {info.map((item) => (
           <section className="mx-auto w-[900px]">
             <h3 className="text-headerSection text-Bright-blue bg-Light-gray h-[50px] flex items-center pl-14">
-              <Link to={`/${item.full_name}`} state={{ item: item }}>
+              <Link
+                to={`${location.pathname}${item.full_name}`}
+                state={{ item: item }}
+              >
                 {item.full_name}
               </Link>
             </h3>

@@ -11,9 +11,9 @@ function App() {
         <Header />
 
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="macrostats.ru/" element={<MainPage />} />
 
-          <Route path="/:id" element={<Chart />} />
+          <Route path="macrostats.ru/:id" element={<Chart />} />
         </Routes>
       </div>
     </Router>
