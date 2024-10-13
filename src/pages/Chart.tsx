@@ -1,11 +1,22 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { data } from "../constants.tsx"; // Предполагаю, что данные загружаются из constants.tsx
 
 export const Chart = () => {
-  const location = useLocation(); // Получение переданного объекта из state
+  const location = useLocation();
 
   const {
     full_name,
@@ -14,16 +25,33 @@ export const Chart = () => {
     period,
     last_observation,
     updated,
-    // eslint-disable-next-line no-unsafe-optional-chaining
-  } = location.state?.item; // Доступ к переданным данным
+  } = location?.state?.item;
 
-  const [startDate, setStartDate] = useState(undefined);
-  const [endDate, setEndDate] = useState(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [filteredData, setFilteredData] = useState(data); // Состояние для отфильтрованных данных
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const formatDate = (date: any) => (date ? format(date, "dd.MM.yyyy") : "");
+  // Функция для форматирования даты
+  const formatDate = (date: Date | undefined) =>
+    date ? format(date, "dd.MM.yyyy") : "";
 
-  console.log(startDate, endDate);
+  // Функция для преобразования строки в объект Date
+  const parseDateString = (dateString: string) => {
+    return parse(dateString, "dd.MM.yyyy", new Date());
+  };
+
+  // Фильтрация данных по диапазону дат
+  useEffect(() => {
+    if (startDate && endDate) {
+      const filtered = data.filter((item) => {
+        const itemDate = parseDateString(item.date); // Преобразуем строку в объект Date
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data); // Если даты не выбраны, показываем все данные
+    }
+  }, [startDate, endDate]);
 
   return (
     <div className="px-20 mx-auto max-w-[1200px]">
@@ -63,13 +91,9 @@ export const Chart = () => {
               className="bg-Light-gray h-36 max-w-100"
               selected={startDate}
               onChange={(date) => {
-                /* eslint-disable @typescript-eslint/no-explicit-any */
-                setStartDate(date as any);
-                const validDate = date || new Date(); // Установить текущую дату, если `date` — null
-                const validEndDate = endDate || new Date(); // Установить текущую дату, если `date` — null
-
-                if (endDate && validDate! > validEndDate) {
-                  setEndDate(undefined); // Сбросить "To" дату, если "From" больше "To"
+                setStartDate(date || undefined);
+                if (endDate && date && date > endDate) {
+                  setEndDate(undefined); // Сбросить конечную дату, если начальная больше конечной
                 }
               }}
               selectsStart
@@ -85,22 +109,37 @@ export const Chart = () => {
             <DatePicker
               className="bg-Light-gray h-36 flex max-w-100"
               selected={endDate}
-              /* eslint-disable @typescript-eslint/no-explicit-any */
-              onChange={(date) => setEndDate(date as any)}
+              onChange={(date) => setEndDate(date || undefined)}
               selectsEnd
               startDate={startDate}
               endDate={endDate}
-              minDate={startDate} // Минимальная дата для выбора в "To" — это "From"
+              minDate={startDate}
               dateFormat="dd.MM.yyyy"
-              disabled={!startDate} // Отключить выбор, если начальная дата не выбрана
+              disabled={!startDate}
             />
           </div>
         </div>
       </div>
 
       <div>
-        {formatDate(startDate)} мне лень пока что доделать график
-        {formatDate(endDate)}
+        {formatDate(startDate)} — {formatDate(endDate)}
+      </div>
+
+      <div>
+        <ResponsiveContainer width="100%" height={500}>
+          <LineChart data={filteredData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="government_revenue"
+              stroke="#8884d8"
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
